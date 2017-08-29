@@ -88,6 +88,7 @@ INSTALLED_APPS = (
 
     # django-bower for installing bower packages
     'djangobower',
+    'social_django',  # <--
 )
 
 # added list of external libraries to be installed by bower
@@ -131,6 +132,10 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+
     'django.contrib.auth.backends.ModelBackend',
     'wger.utils.helpers.EmailAuthBackend'
 )
@@ -156,7 +161,10 @@ TEMPLATES = [
                 'django_mobile.context_processors.flavour',
 
                 # Breadcrumbs
-                'django.template.context_processors.request'
+                'django.template.context_processors.request',
+
+                'social_django.context_processors.backends',  # <--
+                'social_django.context_processors.login_redirect', # <--
             ],
             'loaders': [
                 # Django mobile
@@ -397,3 +405,10 @@ WGER_SETTINGS = {
     'EMAIL_FROM': 'wger Workout Manager <wger@example.com>',
     'TWITTER': False
 }
+
+SOCIAL_AUTH_GITHUB_KEY = '5eeaad0c7eb2f5646565'
+SOCIAL_AUTH_GITHUB_SECRET = 'b9abfc3732c0ffdf07a7bed97b03035e401e65fa'
+
+SOCIAL_AUTH_TWITTER_KEY = 'qIhqBIHzZHL1K1zCPozFtoREK'
+SOCIAL_AUTH_TWITTER_SECRET = 'Bb04gjmX2eMmV5sjvWIEyXVejWSXiYzB7lK3N7W8U4LBmMlHZ3'
+
