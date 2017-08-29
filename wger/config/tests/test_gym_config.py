@@ -40,14 +40,17 @@ class GymConfigTestCase(WorkoutManagerTestCase):
         gym_config.save()
 
         # Register
-        registration_data = {'username': 'myusername',
-                             'password1': 'secret',
-                             'password2': 'secret',
-                             'email': 'my.email@example.com',
+        registration_data = {'username': 'PrometheusTest1',
+                             'password1': 'secret123',
+                             'password2': 'secret123',
+                             'email': 'my.email@email.com',
                              'g-recaptcha-response': 'PASSED', }
         self.client.post(reverse('core:user:registration'), registration_data)
-        new_user = User.objects.all().last()
 
+        new_user = User.objects.all().last()
+        #
+        # sys.stdout = new_user.userprofile.gym
+        #
         self.assertEqual(new_user.userprofile.gym, gym)
         self.assertEqual(new_user.gymuserconfig.gym, gym)
 
@@ -61,10 +64,10 @@ class GymConfigTestCase(WorkoutManagerTestCase):
         gym_config.save()
 
         # Register
-        registration_data = {'username': 'myusername',
-                             'password1': 'secret',
-                             'password2': 'secret',
-                             'email': 'my.email@example.com',
+        registration_data = {'username': 'PrometheusTest1',
+                             'password1': 'secret123',
+                             'password2': 'secret123',
+                             'email': 'my.email@email.com',
                              'g-recaptcha-response': 'PASSED', }
         self.client.post(reverse('core:user:registration'), registration_data)
 

@@ -58,8 +58,8 @@ class RegistrationTestCase(WorkoutManagerTestCase):
 
         # Fill in the registration form
         registration_data = {'username': 'myusername',
-                             'password1': 'secret',
-                             'password2': 'secret',
+                             'password1': 'a-secret-pass123',
+                             'password2': 'a-secret-pass123',
                              'email': 'not an email',
                              'g-recaptcha-response': 'PASSED', }
         count_before = User.objects.count()
@@ -107,10 +107,10 @@ class RegistrationTestCase(WorkoutManagerTestCase):
             self.assertEqual(response.status_code, 302)
 
             # Fill in the registration form
-            registration_data = {'username': 'myusername',
-                                 'password1': 'secret',
-                                 'password2': 'secret',
-                                 'email': 'my.email@example.com',
+            registration_data = {'username': 'amyusername',
+                                 'password1': 'a-secret-pass123',
+                                 'password2': 'a-secret-pass-123',
+                                 'email': 'my.bemail@example.com',
                                  'g-recaptcha-response': 'PASSED', }
             count_before = User.objects.count()
 
