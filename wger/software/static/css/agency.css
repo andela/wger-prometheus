@@ -774,7 +774,7 @@ body {
   webkit-tap-highlight-color: #204a87;
 }
 
-.navlinks{
+.navlinks {
   color: white;
 }
 
@@ -783,7 +783,7 @@ body {
   color: white;
 }
 
-.nav-pills{
+.nav-pills {
   float: right;
 }
 
@@ -810,16 +810,16 @@ body {
 }
 
 
-.try_it:hover{
+.try_it:hover {
   background: #204a87;
   text-decoration: none;
 }
 
-.nav_text{
+.nav_text {
   text-align: center;
   font-size: 3em;
 }
 
-.info{
+.info {
   margin-top: 0px;
 }
