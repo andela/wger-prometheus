@@ -6,6 +6,9 @@
         padding-top: 30px;
         padding-bottom: 30px;
     }
+    .inactive{
+        color:red;
+    }
 
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables/media/css/dataTables.bootstrap.min.css' %}">
@@ -101,7 +104,7 @@ $(document).ready( function () {
             <tbody>
             {% for current_user in user_table.users %}
                 {% if not current_user.obj.is_active %}
-                    <tr class="danger">
+                    <tr>
                         <td>
                             {{current_user.obj.pk}}
                         </td>
@@ -125,7 +128,7 @@ $(document).ready( function () {
                             {% endif %}
                         </td>
                         {% endif %}
-                        <td>
+                        <td class="inactive">
                             {% trans "Inactive" %}
                         </td>
                     </tr>
