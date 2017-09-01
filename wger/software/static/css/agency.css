@@ -27,10 +27,10 @@
 body {
   overflow-x: hidden;
   /*font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-  font-family: font-family: "Open Sans Light", Arial, Helvetica, sans-serif;
+ font-family: "Open Sans Light", Arial, Helvetica, sans-serif;
 }
 .text-muted {
-  color: #777777;
+  color: #e6e6e6;
 }
 .text-light {
   color: white;
@@ -253,7 +253,7 @@ fieldset[disabled] .btn-xl.active {
   }
 }
 header {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)), url('../images/main.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)), url('../images/main.jpg');
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: center center;
@@ -271,7 +271,7 @@ header .intro-text {
 header .intro-text .intro-lead-in {
   font-family: "Open Sans Light", Arial, Helvetica, sans-serif;
   font-style: italic;
-  font-size: 22px;
+  font-size: 1em;
   line-height: 22px;
   margin-bottom: 25px;
 }
@@ -285,23 +285,24 @@ header .intro-text .intro-heading {
 }
 @media (min-width: 768px) {
   header .intro-text {
-    padding-top: 300px;
-    padding-bottom: 200px;
+    padding-top: 200px;
+    padding-bottom: 100px;
   }
   header .intro-text .intro-lead-in {
     font-family: "Open Sans Light", Arial, Helvetica, sans-serif;
     font-style: italic;
-    font-size: 40px;
-    line-height: 40px;
-    margin-bottom: 25px;
+    font-size: 25px;
+    line-height: 25px;
+    margin-bottom: 15px;
+    display: inline-block;
   }
   header .intro-text .intro-heading {
     font-family: "Open Sans Bold", Arial, Helvetica, sans-serif;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 75px;
-    line-height: 75px;
-    margin-bottom: 50px;
+    font-size: 70px;
+    line-height: 70px;
+    margin-bottom: 20px;
   }
 }
 section {
@@ -771,4 +772,54 @@ img::-moz-selection {
 }
 body {
   webkit-tap-highlight-color: #204a87;
+}
+
+.navlinks {
+  color: white;
+}
+
+.nav-link {
+  font-size: 1.6em;
+  color: white;
+}
+
+.nav-pills {
+  float: right;
+}
+
+.right_nav_links {
+  position: absolute;
+  right: 0px;
+  width: 300px;
+  border: 3px solid #73AD21;
+  padding: 10px;
+}
+
+.try_it {
+  width: 120px;
+  border-radius: 10px;
+  color: white;
+  background: #339966;
+  text-align: center;
+  margin-top: 50px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-size: 1.9em;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+
+.try_it:hover {
+  background: #204a87;
+  text-decoration: none;
+}
+
+.nav_text {
+  text-align: center;
+  font-size: 3em;
+}
+
+.info {
+  margin-top: 0px;
 }
