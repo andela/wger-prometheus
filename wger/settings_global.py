@@ -20,7 +20,6 @@ import os
 import re
 import sys
 
-
 '''
 This file contains the global settings that don't usually need to be changed.
 For a full list of options, visit:
@@ -88,6 +87,8 @@ INSTALLED_APPS = (
 
     # django-bower for installing bower packages
     'djangobower',
+
+    'social_django',
 )
 
 # added list of external libraries to be installed by bower
@@ -105,12 +106,12 @@ BOWER_INSTALLED_APPS = (
     'tinymce-dist',
 )
 
-
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 
     # Javascript Header. Sends helper headers for AJAX
     'wger.utils.middleware.JavascriptAJAXRedirectionMiddleware',
@@ -132,7 +133,10 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'wger.utils.helpers.EmailAuthBackend'
+    'wger.utils.helpers.EmailAuthBackend',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
 )
 
 TEMPLATES = [
@@ -151,6 +155,8 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
 
                 # Django mobile
                 'django_mobile.context_processors.flavour',
@@ -188,7 +194,6 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-
 #
 # Email
 #
@@ -199,9 +204,18 @@ EMAIL_SUBJECT_PREFIX = '[wger] '
 #
 # Login
 #
-LOGIN_URL = '/user/login'
-LOGIN_REDIRECT_URL = '/'
 
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/dashboard'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/dashboard'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/dashboard'
+
+SOCIAL_AUTH_FACEBOOK_KEY = "1618894954822021"
+SOCIAL_AUTH_FACEBOOK_SECRET = "6418e09b83b196371ef4a6362f3bb48d"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "67947723669-ovp135jq5pk3lj76v210fugck9pg1od8.apps.googleusercontent.com"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "b0h1usgfFesFvgfmKNNsdEFN"
+SOCIAL_AUTH_TWITTER_KEY = "zKSn62k1edDt5Fm0JGyU6Y4S3"
+SOCIAL_AUTH_TWITTER_SECRET = "X8of3cYz8OSRhe9PpfkBMioQBBMt0HeqpURmLhpAhcNvGutRaY"
 
 #
 # Internationalization
@@ -221,18 +235,18 @@ TIME_ZONE = None
 
 # Restrict the available languages
 LANGUAGES = (
-            ('en', 'English'),
-            ('de', 'German'),
-            ('bg', 'Bulgarian'),
-            ('es', 'Spanish'),
-            ('ru', 'Russian'),
-            ('nl', 'Dutch'),
-            ('pt', 'Portuguese'),
-            ('el', 'Greek'),
-            ('cs', 'Czech'),
-            ('sv', 'Swedish'),
-            ('no', 'Norwegian'),
-            ('fr', 'French'),
+    ('en', 'English'),
+    ('de', 'German'),
+    ('bg', 'Bulgarian'),
+    ('es', 'Spanish'),
+    ('ru', 'Russian'),
+    ('nl', 'Dutch'),
+    ('pt', 'Portuguese'),
+    ('el', 'Greek'),
+    ('cs', 'Czech'),
+    ('sv', 'Swedish'),
+    ('no', 'Norwegian'),
+    ('fr', 'French'),
 )
 
 # Default language code for this installation.
@@ -244,7 +258,6 @@ LOCALE_PATHS = (
 )
 
 FLAVOURS_STORAGE_BACKEND = 'session'
-
 
 #
 # Logging
@@ -273,12 +286,10 @@ LOGGING = {
     }
 }
 
-
 #
 # ReCaptcha
 #
 RECAPTCHA_USE_SSL = True
-
 
 #
 # Cache
@@ -290,7 +301,6 @@ CACHES = {
         'TIMEOUT': 30 * 24 * 60 * 60,  # Cache for a month
     }
 }
-
 
 #
 # Easy thumbnails
@@ -313,7 +323,6 @@ THUMBNAIL_ALIASES = {
         'large_cropped': {'size': (800, 800), 'crop': 'smart', 'quality': 90},
     },
 }
-
 
 #
 # Django compressor
@@ -351,7 +360,6 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',
                                 'rest_framework.filters.OrderingFilter',)
 }
-
 
 #
 # CORS headers: allow all hosts to access the API
