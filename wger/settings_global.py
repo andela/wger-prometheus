@@ -87,7 +87,7 @@ INSTALLED_APPS = (
 
     # django-bower for installing bower packages
     'djangobower',
-
+    # social_django for enabling social login
     'social_django',
 )
 
