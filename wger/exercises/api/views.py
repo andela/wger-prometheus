@@ -132,45 +132,43 @@ def view_exercise(request):
     languages = load_item_languages(LanguageConfig.SHOW_ITEM_EXERCISES,
                                     language_code=request.GET.get('language', None))
     exercise = (Exercise.objects.filter(pk=id)
-                 .filter(status=Exercise.STATUS_ACCEPTED).first())
+                .filter(status=Exercise.STATUS_ACCEPTED).first())
     json_response = {}
- 
-    if exercise:
-         if exercise.main_image:
-             image_obj = exercise.main_image
-             image = image_obj.url
-             t = get_thumbnailer(image_obj.image)
-             thumbnail = t.get_thumbnail(aliases.get('micro_cropped')).url
-         else:
-             image = None
-             thumbnail = None
- 
-         muscles = [ muscle.name for muscle in exercise.muscles.all()]
- 
-         muscles_secondary = [ muscles_secondary.name for muscles_secondary in exercise.muscles_secondary.all()]
- 
-         equipment = [
-             {
-                 'equipment_name': equipment.name
-             }
-             for equipment in exercise.equipment.all()]
- 
-         json_response = {
- 
-             'exercise_id': exercise.id,
-             'exercise_name': exercise.name,
-             'muscles': muscles,
-             'muscles_secondary': muscles_secondary,
-             'equipment': equipment,
-             'image': image,
-             'thumbnail': thumbnail
-         }
 
-         print(exercise.equipment.all())
+    if exercise:
+        if exercise.main_image:
+            image_obj = exercise.main_image
+            image = image_obj.url
+            t = get_thumbnailer(image_obj.image)
+            thumbnail = t.get_thumbnail(aliases.get('micro_cropped')).url
+        else:
+            image = None
+            thumbnail = None
+
+        muscles = [muscle.name for muscle in exercise.muscles.all()]
+
+        muscles_secondary = [muscles_secondary.name
+                             for muscles_secondary in exercise.muscles_secondary.all()]
+
+        equipment = [
+            {'equipment_name': equipment.name} for equipment in exercise.equipment.all()]
+
+        json_response = {
+            'exercise_id': exercise.id,
+            'exercise_name': exercise.name,
+            'muscles': muscles,
+            'muscles_secondary': muscles_secondary,
+            'equipment': equipment,
+            'image': image,
+            'thumbnail': thumbnail
+        }
+
+        print(exercise.equipment.all())
     else:
-         return Response("Exercise not found",404)
- 
+        return Response("Exercise not found", 404)
+
     return Response(json_response)
+
 
 class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     '''
