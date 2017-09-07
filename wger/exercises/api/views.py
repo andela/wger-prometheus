@@ -139,8 +139,8 @@ def view_exercise(request):
         if exercise.main_image:
             image_obj = exercise.main_image
             image = image_obj.url
-            t = get_thumbnailer(image_obj.image)
-            thumbnail = t.get_thumbnail(aliases.get('micro_cropped')).url
+            thumbnails = get_thumbnailer(image_obj.image)
+            thumbnail = thumbnails.get_thumbnail(aliases.get('micro_cropped')).url
         else:
             image = None
             thumbnail = None
@@ -163,7 +163,7 @@ def view_exercise(request):
             'thumbnail': thumbnail
         }
 
-        print(exercise.equipment.all())
+        return Response(json_response)
     else:
         return Response("Exercise not found", 404)
 
