@@ -26,35 +26,44 @@
                     <span class="nav_text center"><strong>WGER</strong> | Workout Manager</span>
                     <ul class="nav nav-pills ml-auto">
                         <li class="nav-item">
-                                {% if not user.is_authenticated or user.userprofile.is_temporary %}
-                                {% if allow_registration %}
+                            {% if not user.is_authenticated or user.userprofile.is_temporary %}
                                     <a href="{% url 'core:user:registration' %}" class="navlinks nav-link">
                                         {% trans "Register" %}
                                     </a>
-                                {% endif %}
                             {% endif %}
                         </li>
+
+                        {% if user.is_authenticated %}
                         <li class="nav-item">
-                                {% if not user.is_authenticated or user.userprofile.is_temporary %}
-                                {% if allow_registration %}
-                                {% endif %}
-                
+                            <a href="/" class="nav-link navlinks">
+                                {% trans "Dashboard" %}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            {% if not user.is_authenticated or user.userprofile.is_temporary %}
                                 <a href="{% url 'core:user:login' %}" class="nav-link navlinks">
                                     {% trans "Login" %}
                                 </a>
+                            {% else %}
+                                <a href="{% url 'core:user:logout' %}" class="nav-link navlinks">
+                                    {% trans "Logout" %}
+                                </a>
                             {% endif %}
-                        </li></ul>
+                        </li>
+                    </ul>
                     </nav>
 
         <div class="container">
             <div class="intro-text">
                 <div class="intro-heading">{% trans "Welcome to wger" %}</div>
                 <div class="intro-lead-in">Track your input, track your output</div>                
-                {% if allow_guest_users and not user.is_authenticated %}
                 <a href="{% url 'core:user:demo-entries' %}" class="center-block" rel="nofollow" style="margin-top: 1em;">
+                    {% if not user.is_authenticated %}
                     <div class="try_it center-block">{% trans "Try it now" %}</div>
+                    {% endif %}
                 </a>
-            {% endif %}
                 </div>
 
                 <div class="row text-center info">

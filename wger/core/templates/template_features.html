@@ -65,15 +65,9 @@
 
 <body id="page-top" class="index">
 
-{% if user.is_authenticated %}
-{% include 'navigation.html' %}
-{% endif  %}
-
     {% block template %}{% endblock %}
     <div id="current-url" data-current-url="{{request_full_path}}"></div>
     <div id="current-language" data-current-language="{{language.short_name}}"></div>
-
-
 
 <footer class="bg-darkest-gray">
     <div class="container">
