@@ -128,13 +128,13 @@ class NutritionPlan(models.Model):
                   }
 
         actually_eaten_result = {'actual_total': {'energy': 0,
-                                           'protein': 0,
-                                           'carbohydrates': 0,
-                                           'carbohydrates_sugar': 0,
-                                           'fat': 0,
-                                           'fat_saturated': 0,
-                                           'fibres': 0,
-                                           'sodium': 0},
+                                                  'protein': 0,
+                                                  'carbohydrates': 0,
+                                                  'carbohydrates_sugar': 0,
+                                                  'fat': 0,
+                                                  'fat_saturated': 0,
+                                                  'fibres': 0,
+                                                  'sodium': 0},
                                  'percent': {'protein': 0,
                                              'carbohydrates': 0,
                                              'fat': 0},
@@ -167,7 +167,8 @@ class NutritionPlan(models.Model):
         if actual_energy:
             for key in actually_eaten_result['percent'].keys():
                 actually_eaten_result['percent'][key] = \
-                    actually_eaten_result['actual_total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
+                    actually_eaten_result['actual_total'][key] \
+                    * ENERGY_FACTOR[key][unit] / energy * 100
 
         # Per body weight
         weight_entry = self.get_closest_weight_entry()
