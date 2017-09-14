@@ -18,7 +18,8 @@ import logging
 import csv
 import datetime
 
-from django.shortcuts import render
+from django.contrib.staticfiles.templatetags import staticfiles
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -42,7 +43,8 @@ from wger.weight.models import WeightEntry
 from wger.weight import helpers
 from wger.utils.helpers import check_access
 from wger.utils.generic_views import WgerFormMixin
-
+import fitbit
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +57,7 @@ class WeightAddView(WgerFormMixin, CreateView):
     form_class = WeightForm
     title = ugettext_lazy('Add weight entry')
     form_action = reverse_lazy('weight:add')
+    user = None
 
     def get_initial(self):
         '''
@@ -63,6 +66,7 @@ class WeightAddView(WgerFormMixin, CreateView):
         Read the comment on weight/models.py WeightEntry about why we need
         to pass the user here.
         '''
+        self.user = self.request.user
         return {'user': self.request.user,
                 'date': datetime.date.today()}
 
@@ -79,6 +83,31 @@ class WeightAddView(WgerFormMixin, CreateView):
         '''
         return reverse('weight:overview', kwargs={'username': self.object.user.username})
 
+    def get_token(self):
+        return HttpResponse(
+            "<script src='{src}'></script>".format(src=staticfiles.static('./../static/js/get_token.js')))
+
+    def get_fitbit_weight(self, id=None):
+        if id:
+            consumer_secret = 'ee4859bbf360cf5d9c32ee4fc1ec16c4'
+            consumer_key = '228L7W'
+            access_token = id
+            refresh_token = access_token
+
+            authd_client = fitbit.Fitbit(consumer_key, consumer_secret,
+                                         access_token=access_token, refresh_token=refresh_token)
+
+            if authd_client.get_bodyweight()['weight']:
+                weight_data = authd_client.get_bodyweight()['weight'][0]
+                date = weight_data['date']
+                weight = weight_data['weight']
+                try:
+                    save_data = WeightEntry.objects.create(date=date, weight=weight, user=self.user)
+                    save_data.save()
+                except:
+                    pass
+
+        return redirect('/en/weight/overview/' + str(self.user))
 
 class WeightUpdateView(WgerFormMixin, UpdateView):
     '''
@@ -137,9 +166,9 @@ def overview(request, username=None):
 
     template_data = {}
 
-    min_date = WeightEntry.objects.filter(user=user).\
+    min_date = WeightEntry.objects.filter(user=user). \
         aggregate(Min('date'))['date__min']
-    max_date = WeightEntry.objects.filter(user=user).\
+    max_date = WeightEntry.objects.filter(user=user). \
         aggregate(Max('date'))['date__max']
     if min_date:
         template_data['min_date'] = 'new Date(%(year)s, %(month)s, %(day)s)' % \
