@@ -42,11 +42,12 @@ class MealCreateView(WgerFormMixin, CreateView):
     fields = '__all__'
     title = ugettext_lazy('Add new meal')
     owner_object = {'pk': 'plan_pk', 'class': NutritionPlan}
-
+    
     def form_valid(self, form):
         plan = get_object_or_404(NutritionPlan, pk=self.kwargs['plan_pk'], user=self.request.user)
         form.instance.plan = plan
         form.instance.order = 1
+        print("form", form)
         return super(MealCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -57,7 +58,6 @@ class MealCreateView(WgerFormMixin, CreateView):
         context = super(MealCreateView, self).get_context_data(**kwargs)
         context['form_action'] = reverse('nutrition:meal:add',
                                          kwargs={'plan_pk': self.kwargs['plan_pk']})
-
         return context
 
 
