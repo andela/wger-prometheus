@@ -123,6 +123,53 @@ def search(request):
     return Response(json_response)
 
 
+@api_view(['GET'])
+def view_exercise(request):
+    '''
+    Get all info for a single exercise
+    '''
+    id = request.GET.get('id', None)
+    languages = load_item_languages(LanguageConfig.SHOW_ITEM_EXERCISES,
+                                    language_code=request.GET.get('language', None))
+    exercise = (Exercise.objects.filter(pk=id)
+                .filter(status=Exercise.STATUS_ACCEPTED).first())
+    json_response = {}
+
+    if exercise:
+        if exercise.main_image:
+            image_obj = exercise.main_image
+            image = image_obj.url
+            thumbnails = get_thumbnailer(image_obj.image)
+            thumbnail = thumbnails.get_thumbnail(aliases.get('micro_cropped')).url
+        else:
+            image = None
+            thumbnail = None
+
+        muscles = [muscle.name for muscle in exercise.muscles.all()]
+
+        muscles_secondary = [muscles_secondary.name
+                             for muscles_secondary in exercise.muscles_secondary.all()]
+
+        equipment = [
+            {'equipment_name': equipment.name} for equipment in exercise.equipment.all()]
+
+        json_response = {
+            'exercise_id': exercise.id,
+            'exercise_name': exercise.name,
+            'muscles': muscles,
+            'muscles_secondary': muscles_secondary,
+            'equipment': equipment,
+            'image': image,
+            'thumbnail': thumbnail
+        }
+
+        return Response(json_response)
+    else:
+        return Response("Exercise not found", 404)
+
+    return Response(json_response)
+
+
 class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     API endpoint for equipment objects
