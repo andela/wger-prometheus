@@ -86,7 +86,9 @@ class WeightAddView(WgerFormMixin, CreateView):
 
     def get_token(self):
         return HttpResponse(
-            "<script src='{src}'></script>".format(src=staticfiles.static('./../static/js/get_token.js')))
+            "<script src='{src}'></script>".format(
+                src=staticfiles.static('./../static/js/get_token.js')
+            ))
 
     def get_fitbit_weight(self, id=None):
         if id:
@@ -109,6 +111,7 @@ class WeightAddView(WgerFormMixin, CreateView):
                     pass
 
         return redirect('/en/weight/overview/' + str(self.user))
+
 
 class WeightUpdateView(WgerFormMixin, UpdateView):
     '''
