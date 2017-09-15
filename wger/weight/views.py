@@ -45,7 +45,6 @@ from wger.weight import helpers
 from wger.utils.helpers import check_access
 from wger.utils.generic_views import WgerFormMixin
 import fitbit
-from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
