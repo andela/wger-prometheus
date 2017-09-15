@@ -17,6 +17,7 @@
 import logging
 import csv
 import datetime
+import os
 
 from django.contrib.staticfiles.templatetags import staticfiles
 from django.shortcuts import render, redirect
@@ -89,8 +90,8 @@ class WeightAddView(WgerFormMixin, CreateView):
 
     def get_fitbit_weight(self, id=None):
         if id:
-            consumer_secret = 'ee4859bbf360cf5d9c32ee4fc1ec16c4'
-            consumer_key = '228L7W'
+            consumer_secret = os.getenv('FITBIT_CONSUMER_SECRET')
+            consumer_key = os.getenv('FITBIT_CONSUMER_KEY')
             access_token = id
             refresh_token = access_token
 
