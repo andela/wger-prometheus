@@ -43,7 +43,7 @@ class MealCreateView(WgerFormMixin, CreateView):
     fields = '__all__'
     title = ugettext_lazy('Add new meal')
     owner_object = {'pk': 'plan_pk', 'class': NutritionPlan}
-    
+
     def form_valid(self, form):
         plan = get_object_or_404(NutritionPlan, pk=self.kwargs['plan_pk'], user=self.request.user)
         form.instance.plan = plan
@@ -99,11 +99,6 @@ def createMeal(request, *args, **kwargs):
     plan = get_object_or_404(NutritionPlan, pk=kwargs['plan_pk'], user=request.user)
     time = request.POST.get('time')
     order = 1
-    
     save_data = Meal.objects.create(plan=plan, order=order, time=time)
     save_data.save()
-    print("====>>>>")
-    print(save_data.id)
-   
-    
     return JsonResponse(save_data.id, safe=False)
