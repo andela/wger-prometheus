@@ -73,6 +73,9 @@ patterns_meal = [
     url(r'^(?P<id>\d+)/delete/$',
         meal.delete_meal,
         name='delete'),
+    url(r'^(?P<plan_pk>\d+)/meal/create/$',
+        login_required(meal.createMeal),
+        name='create'),
 ]
 
 
@@ -87,6 +90,8 @@ patterns_meal_item = [
     url(r'^(?P<item_id>\d+)/delete/$',
         meal_item.delete_meal_item,
         name='delete'),
+    
+
 ]
 
 

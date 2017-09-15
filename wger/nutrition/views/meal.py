@@ -20,6 +20,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy
+from django.http import JsonResponse
 
 from django.views.generic import CreateView, UpdateView
 
@@ -91,3 +92,18 @@ def delete_meal(request, id):
         return HttpResponseRedirect(plan.get_absolute_url())
     else:
         return HttpResponseForbidden()
+
+
+@login_required
+def createMeal(request, *args, **kwargs):
+    plan = get_object_or_404(NutritionPlan, pk=kwargs['plan_pk'], user=request.user)
+    time = request.POST.get('time')
+    order = 1
+    
+    save_data = Meal.objects.create(plan=plan, order=order, time=time)
+    save_data.save()
+    print("====>>>>")
+    print(save_data.id)
+   
+    
+    return JsonResponse(save_data.id, safe=False)

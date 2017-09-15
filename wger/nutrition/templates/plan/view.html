@@ -181,12 +181,14 @@ function wgerCustomModalInit()
                             })
                     $("#saveMeal").click(function(e) {
                         e.preventDefault();
-                        $.post(`{% url 'nutrition:meal:add' plan.id %}`, {}, function(data){
+                        let time = $('#id_time').val();
+                        $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time}, function(data){
                         console.log(data)
+                        $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data+'/item/add/')
+                        
                         
                         });
                     })
-
                             });
             </script>
             
@@ -224,7 +226,7 @@ function wgerCustomModalInit()
                             <div class="tab-pane fade in active" id="step1">
                                
                               <div class="well"> 
-                                    <form action="{% url 'nutrition:meal:add' plan.id %}" method="post" class="form-horizontal" role="form">
+                                    <form  method="post" class="form-horizontal" role="form">
                                         {% csrf_token %}
                                     <div class="form-group " id="form-time">
                                         <div>
@@ -249,8 +251,7 @@ function wgerCustomModalInit()
                                     <div class="form-group">
                                     </div>
                                 
-                                    </form>
-                                
+                                </form>
                               </div>
                               <div>
                                     <a class="btn btn-default next"id="saveMeal" type="submit"  href="#">Continue</a>
@@ -258,31 +259,84 @@ function wgerCustomModalInit()
                             </div>
                             <div class="tab-pane fade" id="step2">
                                <div class="well">
-                                    <form action="{{ form_action }}"
-                                    method="post"
-                                    class="form-horizontal">
-                                  {% csrf_token %}
-                                  {% render_form_errors form %}
-                                  {{form.ingredient}}
-                              
-                                  <div class="form-group {% if field.errors %}has-error{% endif %}" id="form-id_ingredient_searchfield">
-                                      <label for="id_ingredient_searchfield" class="col-md-3 control-label">
-                                          {% trans "Ingredient name" %}
-                                      </label>
-                              
-                                      <div class="col-md-9">
-                                          <input type="text"
-                                                 id="id_ingredient_searchfield"
-                                                 name="ingredient_searchfield"
-                                                 value="{{ingredient_searchfield}}"
-                                                 class="form-control">
-                                          <div id="exercise_name"></div>
-                                      </div>
-                                  </div>
-                                  {% render_form_field form.amount %}
-                                  {% render_form_field form.weight_unit %}
-                                  {% render_form_submit submit_text %}
-                              </form>
+                                <form action="/en/nutrition/meal/item/118/item/add/" method="post" class="form-horizontal" id="meal_item_id">
+                                    {% csrf_token %}                                    
+                                    <input id="id_ingredient" name="ingredient" type="hidden">
+                                
+                                    <div class="form-group " id="form-id_ingredient_searchfield">
+                                        <label for="id_ingredient_searchfield" class="col-md-3 control-label">
+                                            Ingredient name
+                                        </label>
+                                
+                                        <div class="col-md-9">
+                                            <input type="text" id="id_ingredient_searchfield" name="ingredient_searchfield" value="" class="form-control" autocomplete="off">
+                                            <div id="exercise_name"></div>
+                                        </div>
+                                    </div>
+                                    
+                                
+                                <div class="form-group " id="form-amount">
+                                    <div>
+                                        <label for="id_amount" class="col-md-3 control-label">
+                                            Amount
+                                        </label>
+                                
+                                        <div class="col-md-9">
+                                            
+                                                <input class="form-control" id="id_amount" name="amount" step="0.01" type="number">
+                                          
+                                            <span class="help-block">
+                                            
+                                
+                                            
+                                            </span>
+                                        </div>
+                                
+                                    </div>
+                                </div>
+                                
+                                
+                                    
+                                
+                                <div class="form-group " id="form-weight_unit">
+                                    <div>
+                                
+                                        <label for="id_weight_unit" class="col-md-3 control-label">
+                                            Weight unit
+                                            
+                                                <br>
+                                                <span style="font-size:90%;">— <em>Optional</em></span>
+                                            
+                                        </label>
+                                
+                                        <div class="col-md-9">
+                                            
+                                                <select class="form-control" id="id_weight_unit" name="weight_unit">
+                                <option value="" selected="selected">g</option>
+                                </select>
+                                            
+                                
+                                            
+                                
+                                            <span class="help-block">
+                                            
+                                
+                                            
+                                            </span>
+                                        </div>
+                                
+                                    </div>
+                                </div>
+                                
+                                
+                                    
+                                
+                                <div class="form-group">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <input type="submit" value="Save" id="form-save" class="btn btn-default btn-block">
+                                    </div>
+                                </div>
+                                </form>
                                     
                                </div>
                             </div>
