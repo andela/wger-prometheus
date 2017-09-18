@@ -38,13 +38,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from formtools.preview import FormPreview
+import fitbit
 
 from wger.weight.forms import WeightForm
 from wger.weight.models import WeightEntry
 from wger.weight import helpers
 from wger.utils.helpers import check_access
 from wger.utils.generic_views import WgerFormMixin
-import fitbit
 
 logger = logging.getLogger(__name__)
 
