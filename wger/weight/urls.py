@@ -31,7 +31,7 @@ urlpatterns = [
         name='addfitbit'),
 
     url(r'^fitbit/(?P<id>[\w.@+-]+)$',
-            login_required(views.WeightAddView.get_fitbit_weight),
+            views.get_fitbit_weight,
             name='addfitbit'),
 
     url(r'^(?P<pk>\d+)/edit/$',
