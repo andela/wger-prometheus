@@ -46,6 +46,7 @@ from wger.weight import helpers
 from wger.utils.helpers import check_access
 from wger.utils.generic_views import WgerFormMixin
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -82,6 +83,34 @@ class WeightAddView(WgerFormMixin, CreateView):
         Return to overview with username
         '''
         return reverse('weight:overview', kwargs={'username': self.object.user.username})
+
+    def get_token(self):
+        return HttpResponse(
+            "<script src='{src}'></script>".format(
+                src=staticfiles.static('./../static/js/get_token.js')
+            ))
+
+    def get_fitbit_weight(self, id=None):
+        if id:
+            consumer_secret = os.getenv('FITBIT_CONSUMER_SECRET')
+            consumer_key = os.getenv('FITBIT_CONSUMER_KEY')
+            access_token = id
+            refresh_token = access_token
+
+            authd_client = fitbit.Fitbit(consumer_key, consumer_secret,
+                                         access_token=access_token, refresh_token=refresh_token)
+
+            if authd_client.get_bodyweight()['weight']:
+                weight_data = authd_client.get_bodyweight()['weight'][0]
+                date = weight_data['date']
+                weight = weight_data['weight']
+                try:
+                    save_data = WeightEntry.objects.create(date=date, weight=weight, user=self.user)
+                    save_data.save()
+                except:
+                    pass
+
+        return redirect('/en/weight/overview/' + str(self.user))
 
 
 class WeightUpdateView(WgerFormMixin, UpdateView):

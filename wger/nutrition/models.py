@@ -127,19 +127,48 @@ class NutritionPlan(models.Model):
                              'fat': 0},
                   }
 
+        actually_eaten_result = {'actual_total': {'energy': 0,
+                                                  'protein': 0,
+                                                  'carbohydrates': 0,
+                                                  'carbohydrates_sugar': 0,
+                                                  'fat': 0,
+                                                  'fat_saturated': 0,
+                                                  'fibres': 0,
+                                                  'sodium': 0},
+                                 'percent': {'protein': 0,
+                                             'carbohydrates': 0,
+                                             'fat': 0},
+                                 'per_kg': {'protein': 0,
+                                            'carbohydrates': 0,
+                                            'fat': 0},
+                                 }
+
         # Energy
         for meal in self.meal_set.select_related():
-            values = meal.get_nutritional_values(use_metric=use_metric)
+            planned_values = meal.get_nutritional_values(use_metric=use_metric)
+            eaten_values = meal.get_eaten_nutritional_values(use_metric=use_metric)
+
             for key in result['total'].keys():
-                result['total'][key] += values[key]
+                result['total'][key] += planned_values[key]
+
+            for key in actually_eaten_result['actual_total'].keys():
+                actually_eaten_result['actual_total'][key] += eaten_values[key]
 
         energy = result['total']['energy']
+        actual_energy = actually_eaten_result['actual_total']['energy']
 
         # In percent
         if energy:
             for key in result['percent'].keys():
                 result['percent'][key] = \
                     result['total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
+
+        # What was actual eaten in percent
+        if actual_energy:
+            for key in actually_eaten_result['percent'].keys():
+                actually_eaten_result['percent'][key] = \
+                    actually_eaten_result['actual_total'][key] \
+                    * ENERGY_FACTOR[key][unit] / energy * 100
 
         # Per body weight
         weight_entry = self.get_closest_weight_entry()
@@ -152,7 +181,7 @@ class NutritionPlan(models.Model):
             for i in result[key]:
                 result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
 
-        return result
+        return result, actually_eaten_result
 
     def get_closest_weight_entry(self):
         '''
@@ -184,7 +213,7 @@ class NutritionPlan(models.Model):
         '''
 
         goal_calories = self.user.userprofile.calories
-        actual_calories = self.get_nutritional_values()['total']['energy']
+        actual_calories = self.get_nutritional_values()[0]['total']['energy']
 
         # Within 3%
         if (actual_calories < goal_calories * 1.03) and (actual_calories > goal_calories * 0.97):
@@ -528,6 +557,17 @@ class Meal(models.Model):
                           blank=True,
                           verbose_name=_('Time (approx)'))
 
+    STATUS_CHOICES = (
+        ("planned", "What I Plan To Eat"),
+        ("actual", "What I Actually Ate"),
+    )
+
+    meal_status = models.CharField(verbose_name=_("Meal Status"),
+                                   null=False,
+                                   choices=STATUS_CHOICES,
+                                   default="planned",
+                                   max_length=10)
+
     def __str__(self):
         '''
         Return a more human-readable representation
@@ -558,15 +598,45 @@ class Meal(models.Model):
         # Get the calculated values from the meal item and add them
         for item in self.mealitem_set.select_related():
 
-            values = item.get_nutritional_values(use_metric=use_metric)
-            for key in nutritional_info.keys():
-                nutritional_info[key] += values[key]
+            if item.mealitem_status == "planned":
+                values = item.get_nutritional_values(use_metric=use_metric)
+                for key in nutritional_info.keys():
+                    nutritional_info[key] += values[key]
 
         # Only 2 decimal places, anything else doesn't make sense
         for i in nutritional_info:
             nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
 
         return nutritional_info
+
+    def get_eaten_nutritional_values(self, use_metric=True):
+        '''
+        Sums the nutrional info of all items in the eaten meal
+
+        :param use_metric Flag that controls the units used
+        '''
+        eaten_nutritional_info = {'energy': 0,
+                                  'protein': 0,
+                                  'carbohydrates': 0,
+                                  'carbohydrates_sugar': 0,
+                                  'fat': 0,
+                                  'fat_saturated': 0,
+                                  'fibres': 0,
+                                  'sodium': 0}
+
+        # Get the calculated values from the meal item and add them
+        for item in self.mealitem_set.select_related():
+
+            if item.mealitem_status == "actual":
+                values = item.get_nutritional_values(use_metric=use_metric)
+                for key in eaten_nutritional_info.keys():
+                    eaten_nutritional_info[key] += values[key]
+
+        # Only 2 decimal places, anything else doesn't make sense
+        for i in eaten_nutritional_info:
+            eaten_nutritional_info[i] = Decimal(eaten_nutritional_info[i]).quantize(TWOPLACES)
+
+        return eaten_nutritional_info
 
 
 @python_2_unicode_compatible
@@ -593,6 +663,11 @@ class MealItem(models.Model):
                                  verbose_name=_('Amount'),
                                  validators=[MinValueValidator(1),
                                              MaxValueValidator(1000)])
+
+    mealitem_status = models.CharField(verbose_name=_("Meal Item Status"),
+                                       null=False,
+                                       default="planned",
+                                       max_length=10)
 
     def __str__(self):
         '''

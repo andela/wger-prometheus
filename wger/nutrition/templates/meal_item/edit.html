@@ -43,6 +43,17 @@ $(document).ready(function() {
     </div>
     {% render_form_field form.amount %}
     {% render_form_field form.weight_unit %}
+
+    <div class="form-group {% if field.errors %}has-error{% endif %}" id="form-meal_status">
+        <label class="col-md-3 control-label">
+            {% trans "Meal Item Status" %}
+        </label>
+        <div class="col-md-9">
+            <input type="text"
+                   name="mealitem_status" value="{{ meal_status }}" readonly class="form-control"/>
+        </div>
+
+    </div>
     {% render_form_submit submit_text %}
 </form>
 {% endblock %}
