@@ -27,7 +27,7 @@ urlpatterns = [
         name='add'),
 
     url(r'^addf/$',
-        login_required(views.WeightAddView.get_token),
+        views.get_token,
         name='addfitbit'),
 
     url(r'^fitbit/(?P<id>[\w.@+-]+)$',
