@@ -83,12 +83,6 @@ class WeightAddView(WgerFormMixin, CreateView):
         '''
         return reverse('weight:overview', kwargs={'username': self.object.user.username})
 
-    def get_token(self):
-        return HttpResponse(
-            "<script src='{src}'></script>".format(
-                src=staticfiles.static('./../static/js/get_token.js')
-            ))
-
     def get_fitbit_weight(self, id=None):
         if id:
             consumer_secret = os.getenv('FITBIT_CONSUMER_SECRET')
@@ -131,6 +125,14 @@ class WeightUpdateView(WgerFormMixin, UpdateView):
         Return to overview with username
         '''
         return reverse('weight:overview', kwargs={'username': self.object.user.username})
+
+
+@login_required
+def get_token(request):
+    return HttpResponse(
+        "<script src='{src}'></script>".format(
+            src=staticfiles.static('./../static/js/get_token.js')
+        ))
 
 
 @login_required
