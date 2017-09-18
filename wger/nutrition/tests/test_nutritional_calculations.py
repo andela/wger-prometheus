@@ -57,7 +57,7 @@ class NutritionalValuesCalculationsTestCase(WorkoutManagerTestCase):
         result_meal = meal.get_nutritional_values()
         self.assertEqual(result_item, result_meal)
 
-        result_plan = plan.get_nutritional_values()
+        result_plan = plan.get_nutritional_values()[0]
         self.assertEqual(result_meal, result_plan['total'])
 
         # One ingredient, 1 x unit 3
@@ -79,7 +79,7 @@ class NutritionalValuesCalculationsTestCase(WorkoutManagerTestCase):
         result_meal = meal.get_nutritional_values()
         self.assertEqual(result_item, result_meal)
 
-        result_plan = plan.get_nutritional_values()
+        result_plan = plan.get_nutritional_values()[0]
         self.assertEqual(result_meal, result_plan['total'])
 
         # Add another ingredient, 200 gr
@@ -101,7 +101,7 @@ class NutritionalValuesCalculationsTestCase(WorkoutManagerTestCase):
         result_meal = meal.get_nutritional_values()
         self.assertEqual(result_total, result_meal)
 
-        result_plan = plan.get_nutritional_values()
+        result_plan = plan.get_nutritional_values()[0]
         self.assertEqual(result_meal, result_plan['total'])
 
         # Add another ingredient, 20 gr
@@ -123,7 +123,7 @@ class NutritionalValuesCalculationsTestCase(WorkoutManagerTestCase):
         result_meal = meal.get_nutritional_values()
         self.assertEqual(result_total, result_meal)
 
-        result_plan = plan.get_nutritional_values()
+        result_plan = plan.get_nutritional_values()[0]
         self.assertEqual(result_meal, result_plan['total'])
 
     def test_calculations_user(self):
@@ -133,7 +133,7 @@ class NutritionalValuesCalculationsTestCase(WorkoutManagerTestCase):
         '''
         self.user_login('test')
         plan = models.NutritionPlan.objects.get(pk=4)
-        values = plan.get_nutritional_values()
+        values = plan.get_nutritional_values()[0]
 
         self.assertEqual(values['percent']['carbohydrates'], Decimal(29.79).quantize(TWOPLACES))
         self.assertEqual(values['percent']['fat'], Decimal(20.36).quantize(TWOPLACES))

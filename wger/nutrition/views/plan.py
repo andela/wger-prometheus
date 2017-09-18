@@ -146,7 +146,10 @@ def view(request, id):
     # Get the nutritional info
     template_data['plan'] = plan
     template_data['nutritional_data'] = \
-        plan.get_nutritional_values()
+        plan.get_nutritional_values()[0]
+
+    template_data['actual_eaten_nutritional_data'] = \
+        plan.get_nutritional_values()[1]
 
     # Get the weight entry used
     template_data['weight_entry'] = plan.get_closest_weight_entry()
@@ -216,7 +219,7 @@ def export_pdf(request, id, uidb64=None, token=None):
             return HttpResponseForbidden()
         plan = get_object_or_404(NutritionPlan, pk=id, user=request.user)
 
-    plan_data = plan.get_nutritional_values()
+    plan_data = plan.get_nutritional_values()[0]
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')

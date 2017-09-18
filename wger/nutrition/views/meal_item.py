@@ -79,6 +79,7 @@ class MealItemCreateView(WgerFormMixin, CreateView):
         context['form_action'] = reverse('nutrition:meal_item:add',
                                          kwargs={'meal_id': self.meal.id})
         context['ingredient_searchfield'] = self.request.POST.get('ingredient_searchfield', '')
+        context['meal_status'] = self.meal.meal_status
         return context
 
     def form_valid(self, form):
@@ -110,4 +111,5 @@ class MealItemEditView(WgerFormMixin, UpdateView):
         '''
         context = super(MealItemEditView, self).get_context_data(**kwargs)
         context['ingredient_searchfield'] = self.object.ingredient.name
+        context['meal_status'] = self.object.meal.meal_status
         return context

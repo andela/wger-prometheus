@@ -47,7 +47,7 @@ class EditMealTestCase(WorkoutManagerEditTestCase):
     object_class = Meal
     url = 'nutrition:meal:edit'
     pk = 5
-    data = {'time': datetime.time(8, 12)}
+    data = {'time': datetime.time(8, 12), 'meal_status': 'planned'}
 
 
 class AddMealTestCase(WorkoutManagerAddTestCase):
@@ -57,7 +57,7 @@ class AddMealTestCase(WorkoutManagerAddTestCase):
 
     object_class = Meal
     url = reverse('nutrition:meal:add', kwargs={'plan_pk': 4})
-    data = {'time': datetime.time(9, 2)}
+    data = {'time': datetime.time(9, 2), 'meal_status': 'planned'}
     user_success = 'test'
     user_fail = 'admin'
 

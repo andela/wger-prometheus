@@ -69,8 +69,17 @@ function wgerCustomModalInit()
         {% ifchanged meal.pk %}
         <td rowspan="{{meal.mealitem_set.count}}">
             <strong>
-            {% trans "Nr."%} {{ forloop.parentloop.counter }}
-            {% if meal.time %} &ndash; {{meal.time|time:"H:i"}}{% endif %}
+            {% trans "Nr."%}
+            {% if meal.time %} &ndash;
+                {{meal.time|time:"H:i"}}
+            {% endif %}
+                <br />
+                {% if meal.meal_status == "planned" %}
+                <b>{% trans "Planned To Eat" %}</b>
+                {% else %}
+                <b>{% trans "What I Ate" %}</b>
+                {% endif %}
+
             </strong>
 
             {% if is_owner %}
@@ -245,6 +254,10 @@ function wgerCustomModalInit()
         <tr>
             <th>{% trans "Energy" %}</th>
             <th class="align-right">{{nutritional_data.total.energy|floatformat}} {% trans "kcal" %}</th>
+        </tr>
+        <tr>
+            <th>{% trans "Actual Energy" %}</th>
+            <th class="align-right">{{actual_eaten_nutritional_data.actual_total.energy|floatformat}} {% trans "kcal" %}</th>
         </tr>
     </thead>
     <tbody>
