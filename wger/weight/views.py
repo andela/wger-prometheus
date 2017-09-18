@@ -129,7 +129,7 @@ def get_fitbit_weight(request, id=None):
             date = weight_data['date']
             weight = weight_data['weight']
             try:
-                save_data = WeightEntry.objects.create(date=date, weight=weight, user=self.user)
+                save_data = WeightEntry.objects.create(date=date, weight=weight, user=request.user)
                 save_data.save()
             except:
                 pass
