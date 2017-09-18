@@ -21,11 +21,18 @@ from django.contrib.auth.decorators import login_required
 from wger.weight.forms import WeightCsvImportForm
 from wger.weight import views
 
-
 urlpatterns = [
     url(r'^add/$',
         login_required(views.WeightAddView.as_view()),
         name='add'),
+
+    url(r'^addf/$',
+        login_required(views.WeightAddView.get_token),
+        name='addfitbit'),
+
+    url(r'^fitbit/(?P<id>[\w.@+-]+)$',
+            login_required(views.WeightAddView.get_fitbit_weight),
+            name='addfitbit'),
 
     url(r'^(?P<pk>\d+)/edit/$',
         login_required(views.WeightUpdateView.as_view()),
@@ -44,10 +51,10 @@ urlpatterns = [
     # url(r'^overview/$',
     #     views.overview,
     #     name='overview'),
-    url(r'^api/get_weight_data/(?P<username>[\w.@+-]+)$', # JS
+    url(r'^api/get_weight_data/(?P<username>[\w.@+-]+)$',  # JS
         views.get_weight_data,
         name='weight-data'),
-    url(r'^api/get_weight_data/$', # JS
+    url(r'^api/get_weight_data/$',  # JS
         views.get_weight_data,
         name='weight-data'),
 ]
