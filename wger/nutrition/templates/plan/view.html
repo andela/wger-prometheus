@@ -144,12 +144,6 @@ function wgerCustomModalInit()
         {% if is_owner %}
         <tr>
             <td colspan="6">
-            <a href="{% url 'nutrition:meal:add' plan.id %}"
-            class="wger-modal-dialog"
-               >
-                <span class="{% fa_class 'plus' %}"></span>
-                {% trans "Add a new meal" %}
-            </a>
             <script>
                 $(document).ready(function(){
 
