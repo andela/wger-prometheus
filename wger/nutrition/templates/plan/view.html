@@ -154,7 +154,7 @@ function wgerCustomModalInit()
                 $(document).ready(function(){
 
                             $('.next').click(function(){
-                            
+
                                 var nextId = $(this).parents('.tab-pane').next().attr("id");
                                 $('[href=#'+nextId+']').tab('show');
                                 return false;
@@ -180,14 +180,19 @@ function wgerCustomModalInit()
                             
                             })
                     $("#saveMeal").click(function(e) {
-                        e.preventDefault();
                         let time = $('#id_time').val();
-                        $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time}, function(data){
+                        if( !time ) {
+                            console.log("Time is empty",time)
+                            }else{
+                                $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time}, function(data){
                         console.log(data)
                         $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data+'/item/add/')
                         
                         
                         });
+                            }
+
+                        
                     })
                             });
             </script>
@@ -241,7 +246,7 @@ function wgerCustomModalInit()
                                     
                                             <div class="col-md-9">
                                                 
-                                                    <input class="form-control" id="id_time" name="time" type="time">
+                                                    <input class="form-control" id="id_time" name="time" type="time" required>
                                                 <span class="help-block">
                                                 </span>
                                             </div>
@@ -314,23 +319,13 @@ function wgerCustomModalInit()
                                                 <select class="form-control" id="id_weight_unit" name="weight_unit">
                                 <option value="" selected="selected">g</option>
                                 </select>
-                                            
-                                
-                                            
-                                
+
                                             <span class="help-block">
-                                            
-                                
-                                            
                                             </span>
                                         </div>
                                 
                                     </div>
                                 </div>
-                                
-                                
-                                    
-                                
                                 <div class="form-group">
                                     <div class="col-md-offset-3 col-md-9">
                                         <input type="submit" value="Save" id="form-save" class="btn btn-default btn-block">
@@ -340,10 +335,6 @@ function wgerCustomModalInit()
                                     
                                </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                          <button class="btn btn-primary">Save And continue</button>
                         </div>
                       </div>
                     </div>
