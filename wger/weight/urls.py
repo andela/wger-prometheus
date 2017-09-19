@@ -27,12 +27,12 @@ urlpatterns = [
         name='add'),
 
     url(r'^addf/$',
-        login_required(views.WeightAddView.get_token),
+        views.get_token,
         name='addfitbit'),
 
     url(r'^fitbit/(?P<id>[\w.@+-]+)$',
-            login_required(views.WeightAddView.get_fitbit_weight),
-            name='addfitbit'),
+        views.get_fitbit_weight,
+        name='addfitbit'),
 
     url(r'^(?P<pk>\d+)/edit/$',
         login_required(views.WeightUpdateView.as_view()),
