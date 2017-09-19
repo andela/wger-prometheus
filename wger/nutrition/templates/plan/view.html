@@ -162,13 +162,7 @@ function wgerCustomModalInit()
             <script>
                 $(document).ready(function(){
 
-                            $('.next').click(function(){
-
-                                var nextId = $(this).parents('.tab-pane').next().attr("id");
-                                $('[href=#'+nextId+']').tab('show');
-                                return false;
-                                
-                            })
+                          
                             
                             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                                 
@@ -192,17 +186,22 @@ function wgerCustomModalInit()
                         let time = $('#id_time').val();
                         if( !time ) {
                             console.log("Time is empty",time)
+                            alert("Empty time")
                             }else{
-                                $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time}, function(data){
-                        console.log(data)
-                        $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data+'/item/add/')
-                        
-                        
-                        });
-                            }
 
-                        
+                                $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time}, function(data){
+                                console.log(data)
+                                $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data+'/item/add/')
+
+
+                        })
+                        var nextId = $(this).parents('.tab-pane').next().attr("id");
+                        $('[href=#'+nextId+']').tab('show');
+                        return false;
+                                
+                            }
                     })
+
                             });
             </script>
             
@@ -273,7 +272,7 @@ function wgerCustomModalInit()
                             </div>
                             <div class="tab-pane fade" id="step2">
                                <div class="well">
-                                <form action="/en/nutrition/meal/item/118/item/add/" method="post" class="form-horizontal" id="meal_item_id">
+                                <form method="post" class="form-horizontal" id="meal_item_id">
                                     {% csrf_token %}                                    
                                     <input id="id_ingredient" name="ingredient" type="hidden">
                                 
@@ -283,7 +282,7 @@ function wgerCustomModalInit()
                                         </label>
                                 
                                         <div class="col-md-9">
-                                            <input type="text" id="id_ingredient_searchfield" name="ingredient_searchfield" value="" class="form-control" autocomplete="off">
+                                            <input type="text" id="id_ingredient_searchfield" name="ingredient_searchfield" value="" class="form-control" autocomplete="off" required>
                                             <div id="exercise_name"></div>
                                         </div>
                                     </div>
@@ -297,7 +296,7 @@ function wgerCustomModalInit()
                                 
                                         <div class="col-md-9">
                                             
-                                                <input class="form-control" id="id_amount" name="amount" step="0.01" type="number">
+                                                <input class="form-control" id="id_amount" name="amount" step="0.01" type="number" required>
                                           
                                             <span class="help-block">
                                             
