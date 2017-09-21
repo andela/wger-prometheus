@@ -49,6 +49,8 @@ from wger.utils.generic_views import WgerFormMixin, WgerDeleteMixin
 from wger.utils.helpers import check_token, make_token
 from wger.utils.pdf import styleSheet
 from wger.utils.language import load_language
+from django.views.decorators.cache import cache_page
+
 
 
 logger = logging.getLogger(__name__)
@@ -58,7 +60,7 @@ logger = logging.getLogger(__name__)
 # Plan functions
 # ************************
 
-
+@cache_page(60 * 60)
 @login_required
 def overview(request):
     template_data = {}
