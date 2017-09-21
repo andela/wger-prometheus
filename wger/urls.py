@@ -108,6 +108,9 @@ router.register(r'exerciseimage', exercises_api_views.ExerciseImageViewSet, base
 router.register(r'exercisecomment', exercises_api_views.ExerciseCommentViewSet, base_name='exercisecomment')
 router.register(r'muscle', exercises_api_views.MuscleViewSet, base_name='muscle')
 
+# API Users
+router.register(r'user', core_api_views.UserAPIView, base_name='user')
+
 # Nutrition app
 router.register(r'ingredient', nutrition_api_views.IngredientViewSet, base_name='api-ingredient')
 router.register(r'weightunit', nutrition_api_views.WeightUnitViewSet, base_name='weightunit')

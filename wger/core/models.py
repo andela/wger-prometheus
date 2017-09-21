@@ -313,6 +313,8 @@ by the US Department of Agriculture. It is extremely complete, with around
                                                    default=0)
     '''Number of Days for email weight reminder'''
 
+    rest_api_user = models.BooleanField(default=False, editable=False)
+
     @property
     def weight(self):
         '''
@@ -647,3 +649,9 @@ class WeightUnit(models.Model):
         This is done basically to not litter the code with magic IDs
         '''
         return self.id in (1, 2)
+
+
+class APIUsers(models.Model):
+
+    app_user = models.ForeignKey(User, related_name='app_user')
+    app_owner = models.ForeignKey(User, related_name='app_owner')

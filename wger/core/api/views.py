@@ -19,6 +19,15 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework import permissions
+# from guardian.shortcuts import get_user_perms
+from rest_framework.throttling import UserRateThrottle
+from django.utils import translation
+from wger.config.models import GymConfig
+
+from wger.gym.models import (
+    GymUserConfig,
+)
 
 from wger.core.models import (
     UserProfile,
@@ -26,14 +35,16 @@ from wger.core.models import (
     DaysOfWeek,
     License,
     RepetitionUnit,
-    WeightUnit)
+    WeightUnit,
+    APIUsers)
 from wger.core.api.serializers import (
     UsernameSerializer,
     LanguageSerializer,
     DaysOfWeekSerializer,
     LicenseSerializer,
     RepetitionUnitSerializer,
-    WeightUnitSerializer
+    WeightUnitSerializer,
+    UserSerializer,
 )
 from wger.core.api.serializers import UserprofileSerializer
 from wger.utils.permissions import UpdateOnlyPermission, WgerPermission
@@ -121,3 +132,47 @@ class WeightUnitViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WeightUnitSerializer
     ordering_fields = '__all__'
     filter_fields = ('name', )
+
+
+class UserAPIView(viewsets.ModelViewSet):
+
+    permission_classes = (permissions.DjangoObjectPermissions,)
+    throttle_classes = (UserRateThrottle,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = User.objects.create_user(
+            username=serializer.data['username'],
+            email=serializer.data['email'],
+            password=serializer.validated_data['password']
+        )
+
+        user.save()
+
+        user = User.objects.get(pk=user.id)
+
+        # Pre-set some values of the user's profile
+        language = Language.objects.get(short_name=translation.get_language())
+        user.userprofile.notification_language = language
+
+        # Set default gym, if needed
+        gym_config = GymConfig.objects.get(pk=1)
+        if gym_config.default_gym:
+            user.userprofile.gym = gym_config.default_gym
+
+            # Create gym user configuration object
+            config = GymUserConfig()
+            config.gym = gym_config.default_gym
+            config.user = user
+            config.save()
+
+        user.userprofile.save()
+
+        APIUsers.objects.create(app_user=user, app_owner=request.user)
+
+        return Response(serializer.data)
