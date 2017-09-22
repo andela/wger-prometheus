@@ -1,43 +1,83 @@
 {% load wger_extras %}
 {% load i18n %}
-<div id="formset-exercise-{{exercise.id}}" style="margin-top: 1em;">
-<div class="row">
-    <div class="col-md-offset-2 col-md-10">
-        <label class="control-label">
-            {{exercise}}
+<div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">
+            Drop sets
         </label>
+        <div class=" col-md-9">
+            <span class="help-block">
+                This technique is performed when using dumbbells. Once you reach failure with a certain dumbbell weight,
+                pick up a lighter weight off the rack and continue down the rack until
+                failure.
+                <br><br>
+                <b>Rule</b> : 1st set should be heaviest. No rest in between drops sets. "Walk down the rack" selecting weights.
+                <br><br>
+                <b>Instructions</b> : Input only the initial weight and number of reps per set.
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-3 control-label">
+        </label>
+        <div class=" col-md-9">
+            <span class="help-block">
+                 <div class="col-xs-3 " id="col-xs-3">
+                    <input type="number" id="button-type1" onchange="saveReps()" class="form-control"
+                           placeholder="Reps">
+                </div>
+                <div class="col-xs-4 " id="col-xs-4">
+                    <input type="number" id="button-type2" onchange="saveWeight()" class="form-control"
+                           placeholder="Weight">
+                </div>
+                <a class="btn btn-primary" onclick="getDropsets()">Calculate Drop sets</a>
+            </span>
+        </div>
+    </div>
+
+    <div style="margin : 40px; float: right;">
+
+
     </div>
 </div>
-{{ formset.management_form }}
-
-{% for field in formset %}
-<div style="padding-top: 0.5em;">
-
-    {# Header row with field labels, only for first loop #}
+<div id="formset-exercise-{{exercise.id}}" style="margin-top: 1em;">
     <div class="row">
-        {% for i in field %}
-        {% if not i.is_hidden %}
+        <div class="col-md-offset-2 col-md-10">
+            <label class="control-label">
+                {{exercise}}
+            </label>
+        </div>
+    </div>
+    {{ formset.management_form }}
+
+    {% for field in formset %}
+    <div style="padding-top: 0.5em;">
+
+        {# Header row with field labels, only for first loop #}
+        <div class="row">
+            {% for i in field %}
+            {% if not i.is_hidden %}
             {% if forloop.first %}
             <div class="col-xs-2">
             </div>
             {% endif %}
-
             {% if forloop.parentloop.first %}
-                <div class="{% cycle 'col-xs-3' 'col-xs-2' %}">
-                    {{ i.label }}
-                    {% if not i.field.required %}
-                        <br>
-                        <span style="font-size:90%;">— <em>{% trans "Optional" %}</em></span>
-                    {% endif %}
-                </div>
+            <div class="{% cycle 'col-xs-3' 'col-xs-2' %}">
+                {{ i.label }}
+                {% if not i.field.required %}
+                <br>
+                <span style="font-size:90%;">— <em>{% trans "Optional" %}</em></span>
+                {% endif %}
+            </div>
             {% endif %}
-        {% endif %}
-        {% endfor %}
-    </div>
+            {% endif %}
+            {% endfor %}
+        </div>
 
-    {# Form field rows #}
-    <div class="row">
-        {% for i in field %}
+        {# Form field rows #}
+        <div class="row">
+            {% for i in field %}
             {% if forloop.first %}
             <div class="col-xs-2" style="text-align: right; padding-left: 0px;">
                 {% trans "Nr." %} {{ forloop.parentloop.counter }}
@@ -45,29 +85,72 @@
             {% endif %}
 
             {% if not i.is_hidden %}
-            <div class="{% cycle 'col-xs-3' 'col-xs-2' %} {% if i.errors %}has-error{% endif %}" style="padding-left: 0px;">
-            {% endif %}
+            <div class="{% cycle 'col-xs-3' 'col-xs-2' %} {% if i.errors %}has-error{% endif %}"
+                 style="padding-left: 0px;">
+                {% endif %}
 
-            {#  Field elements #}
-            {% if i|is_checkbox %}
+                {# Field elements #}
+                {% if i|is_checkbox %}
+                PRINT
                 {{ i|form_field_add_css:'checkbox' }}
-            {% else %}
+                {% else %}
                 {{i|form_field_add_css:'form-control'}}
-            {% endif %}
+                {% endif %}
 
-            {% for error in i.errors %}
-                <div {% if i.errors %}class="has-error has-feedback"{% endif %}>
+                {% for error in i.errors %}
+                <div {% if i.errors %}class="has-error has-feedback" {% endif %}>
                 <span class="help-block">
                     <p>{% trans error %}</p>
                 </span>
                 </div>
-            {% endfor %}
+                {% endfor %}
 
-            {% if not i.is_hidden %}
+                {% if not i.is_hidden %}
             </div>
             {% endif %}
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
-</div>
+<script>
+    var noSets = document.getElementById('id_sets').value;
+    var value = '';
+    var noReps = '';
+    var id = document.querySelectorAll('input.form-control')[4].id;
+    var exerciseNo = id.replace(/^\D+|\D.*$/g, '');
+    var repsId = '';
+    var weightId = '';
+    var repClass = '';
+    var weightClass = '';
+    var i = null;
+    function getDropsets() {
+        if (noReps && value) {
+            for (i = 0; i <= noSets; i++) {
+                repsId = 'id_exercise' + exerciseNo + '-' + i + '-reps';
+                weightId = 'id_exercise' + exerciseNo + '-' + i + '-weight';
+                document.getElementById(weightId).value = parseFloat(value).toFixed(0);
+                document.getElementById(repsId).value = noReps;
+                value -= value * 0.3;
+            }
+        }
+    }
+    function saveReps() {
+        noReps = document.getElementById('button-type1').value;
+        if (noReps < 1) {
+            repClass = 'col-xs-3 has-error';
+        } else {
+            repClass = 'col-xs-3';
+        }
+        document.getElementById('col-xs-3').className = repClass;
+    }
+    function saveWeight() {
+        value = document.getElementById('button-type2').value;
+        if (value < 30) {
+            weightClass = 'col-xs-4 has-error';
+        } else {
+            weightClass = 'col-xs-4';
+        }
+        document.getElementById('col-xs-4').className = weightClass;
+    }
+</script>
