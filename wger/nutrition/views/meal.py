@@ -107,4 +107,3 @@ def createMeal(request, *args, **kwargs):
         'meal_status': save_data.meal_status
     }
     return JsonResponse(data, safe=False)
-
