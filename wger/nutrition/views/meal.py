@@ -98,7 +98,12 @@ def delete_meal(request, id):
 def createMeal(request, *args, **kwargs):
     plan = get_object_or_404(NutritionPlan, pk=kwargs['plan_pk'], user=request.user)
     time = request.POST.get('time')
+    meal_status = request.POST.get('meal_status')
     order = 1
-    save_data = Meal.objects.create(plan=plan, order=order, time=time)
+    save_data = Meal.objects.create(plan=plan, order=order, time=time, meal_status=meal_status)
     save_data.save()
-    return JsonResponse(save_data.id, safe=False)
+    data = {
+        'meal_id': save_data.id,
+        'meal_status': save_data.meal_status
+    }
+    return JsonResponse(data, safe=False)

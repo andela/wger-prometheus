@@ -178,14 +178,14 @@ function wgerCustomModalInit()
                             })
                     $("#saveMeal").click(function(e) {
                         let time = $('#id_time').val();
-                        if( !time ) {
-                            console.log("Time is empty",time)
-                            alert("Empty time")
+                        let meal_status = $('#id_meal_status').val();
+                        if( !time || !meal_status ) {
+                            alert("Empty values")
                             }else{
 
-                                $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time}, function(data){
-                                console.log(data)
-                                $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data+'/item/add/')
+                                $.post(`{% url 'nutrition:meal:create' plan.id %}`, {'time':time,'meal_status':meal_status}, function(data){
+                                $('#meal_item_status').val(data.meal_status)
+                                $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data.meal_id+'/item/add/')
 
 
                         })
@@ -250,6 +250,33 @@ function wgerCustomModalInit()
                                                 
                                                     <input class="form-control" id="id_time" name="time" type="time" required>
                                                 <span class="help-block">
+                                                </span>
+                                            </div>
+                                    
+                                        </div>
+                                    </div>
+                                    <div class="form-group " id="form-meal_status">
+                                        <div>
+                                    
+                                            <label for="id_meal_status" class="col-md-3 control-label">
+                                                Meal Status
+                                                
+                                            </label>
+                                    
+                                            <div class="col-md-9">
+                                                
+                                                    <select class="form-control" id="id_meal_status" name="meal_status">
+                                    <option value="planned" selected="selected">What I Plan To Eat</option>
+                                    <option value="actual">What I Actually Ate</option>
+                                    </select>
+                                                
+                                    
+                                                
+                                    
+                                                <span class="help-block">
+                                                
+                                    
+                                                
                                                 </span>
                                             </div>
                                     
@@ -327,6 +354,15 @@ function wgerCustomModalInit()
                                         </div>
                                 
                                     </div>
+                                </div>
+                                <div class="form-group " id="form-meal_status">
+                                    <label class="col-md-3 control-label">
+                                        Meal Item Status
+                                    </label>
+                                    <div class="col-md-9">
+                                        <input id="meal_item_status" type="text" name="mealitem_status" value="" readonly="" class="form-control">
+                                    </div>
+                            
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-offset-3 col-md-9">
