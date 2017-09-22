@@ -187,7 +187,6 @@ function wgerCustomModalInit()
                                 $('#meal_item_status').val(data.meal_status)
                                 $('#meal_item_id').attr('action', '/en/nutrition/meal/item/'+data.meal_id+'/item/add/')
 
-
                         })
                         var nextId = $(this).parents('.tab-pane').next().attr("id");
                         $('[href=#'+nextId+']').tab('show');
