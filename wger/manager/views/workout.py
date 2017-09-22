@@ -17,9 +17,11 @@
 import logging
 import uuid
 import datetime
+import json
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.core import serializers
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.template.context_processors import csrf
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy, ugettext as _
@@ -68,9 +70,26 @@ def overview(request):
     (current_workout, schedule) = Schedule.objects.get_current_workout(request.user)
     template_data['workouts'] = workouts
     template_data['current_workout'] = current_workout
-
     return render(request, 'workout/overview.html', template_data)
 
+def export_workout(request):
+    workouts = Workout.objects.filter(user=request.user)
+    data = serializers.serialize('json', workouts)
+    response = HttpResponse(data, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=data.json'
+    response['Content-Length'] = len(response.content)
+    return response
+
+def import_workout(request):
+    data = request.FILES['myfile'];
+    data_json = json.load(data)
+    for dt in data_json:
+        dt['fields']['user'] = request.user.id
+    print(data_json)
+    obj_generator = serializers.deserialize("json",json.dumps(data_json))
+    for obj in obj_generator:                          
+        obj.save()
+    return redirect('/import/workout/overview')
 
 def view(request, pk):
     '''
