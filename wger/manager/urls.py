@@ -52,7 +52,7 @@ patterns_workout = [
     url(r'^add$',
         workout.add,
         name='add'),
-    url(r'^export$',
+    url(r'^(?P<pk>\d+)/export$',
         workout.export_workout,
         name='export'),
     url(r'^import$',

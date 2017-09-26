@@ -73,14 +73,15 @@ def overview(request):
     return render(request, 'workout/overview.html', template_data)
 
 
-def export_workout(request):
+def export_workout(request, pk):
     '''
     Export workouts
     '''
-    workouts = Workout.objects.filter(user=request.user)
+    workouts = Workout.objects.filter(user=request.user, pk=pk)
+    workout = get_object_or_404(Workout, pk=pk)
     data = serializers.serialize('json', workouts)
     response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=data.json'
+    response['Content-Disposition'] = 'attachment; filename=' + str(workout) + '.json'
     response['Content-Length'] = len(response.content)
     return response
 
@@ -91,12 +92,15 @@ def import_workout(request):
     '''
     data = request.FILES['myfile']
     data_json = json.load(data)
-    for dt in data_json:
-        dt['fields']['user'] = request.user.id
-    print(data_json)
-    obj_generator = serializers.deserialize("json", json.dumps(data_json))
-    for obj in obj_generator:
-        obj.save()
+    workout = get_object_or_404(Workout, pk=data_json[0]['pk'])
+    days = workout.day_set.all()
+    workout_import = workout
+    workout_import.pk = None
+    workout_import.comment = data_json[0]['fields']['comment']
+    workout_import.user = request.user
+    workout_import.save()
+    export_copy_workout(days, workout_import)
+
     return redirect('/import/workout/overview')
 
 
@@ -151,6 +155,44 @@ def view(request, pk):
 
     return render(request, 'workout/view.html', template_data)
 
+def export_copy_workout(days, workout_copy):
+# Copy the days
+    for day in days:
+        sets = day.set_set.all()
+
+        day_copy = day
+        days_of_week = [i for i in day.day.all()]
+        day_copy.pk = None
+        day_copy.training = workout_copy
+        day_copy.save()
+        for i in days_of_week:
+            day_copy.day.add(i)
+        day_copy.save()
+
+        # Copy the sets
+        for current_set in sets:
+            current_set_id = current_set.id
+            exercises = current_set.exercises.all()
+
+            current_set_copy = current_set
+            current_set_copy.pk = None
+            current_set_copy.exerciseday = day_copy
+            current_set_copy.save()
+
+            # Exercises has Many2Many relationship
+            current_set_copy.exercises = exercises
+
+            # Go through the exercises
+            for exercise in exercises:
+                settings = exercise.setting_set.filter(
+                    set_id=current_set_id)
+
+                # Copy the settings
+                for setting in settings:
+                    setting_copy = setting
+                    setting_copy.pk = None
+                    setting_copy.set = current_set_copy
+                    setting_copy.save()
 
 @login_required
 def copy_workout(request, pk):
@@ -179,44 +221,7 @@ def copy_workout(request, pk):
             workout_copy.comment = workout_form.cleaned_data['comment']
             workout_copy.user = request.user
             workout_copy.save()
-
-            # Copy the days
-            for day in days:
-                sets = day.set_set.all()
-
-                day_copy = day
-                days_of_week = [i for i in day.day.all()]
-                day_copy.pk = None
-                day_copy.training = workout_copy
-                day_copy.save()
-                for i in days_of_week:
-                    day_copy.day.add(i)
-                day_copy.save()
-
-                # Copy the sets
-                for current_set in sets:
-                    current_set_id = current_set.id
-                    exercises = current_set.exercises.all()
-
-                    current_set_copy = current_set
-                    current_set_copy.pk = None
-                    current_set_copy.exerciseday = day_copy
-                    current_set_copy.save()
-
-                    # Exercises has Many2Many relationship
-                    current_set_copy.exercises = exercises
-
-                    # Go through the exercises
-                    for exercise in exercises:
-                        settings = exercise.setting_set.filter(
-                            set_id=current_set_id)
-
-                        # Copy the settings
-                        for setting in settings:
-                            setting_copy = setting
-                            setting_copy.pk = None
-                            setting_copy.set = current_set_copy
-                            setting_copy.save()
+            export_copy_workout(days, workout_copy)
 
             return HttpResponseRedirect(reverse('manager:workout:view',
                                                 kwargs={'pk': workout.id}))
