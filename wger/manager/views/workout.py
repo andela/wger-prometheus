@@ -155,8 +155,9 @@ def view(request, pk):
 
     return render(request, 'workout/view.html', template_data)
 
+
 def export_copy_workout(days, workout_copy):
-# Copy the days
+
     for day in days:
         sets = day.set_set.all()
 
@@ -193,6 +194,7 @@ def export_copy_workout(days, workout_copy):
                     setting_copy.pk = None
                     setting_copy.set = current_set_copy
                     setting_copy.save()
+
 
 @login_required
 def copy_workout(request, pk):
